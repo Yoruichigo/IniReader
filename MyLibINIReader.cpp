@@ -1,6 +1,6 @@
 /*
 
-	テキストデータを読み込むクラス
+	iniテキストデータを読み込むクラス
 	ソース
 
 */
@@ -63,13 +63,42 @@ bool INIReader::GetPutStringValue(const std::string _Keyword, std::string* _Stor
 {
 	//キーワードのインデックス位置
 	int KeyIndexPos;
-	KeyIndexPos = TextData.find_first_of(_Keyword);
-	if (KeyIndexPos == std::string::npos){
-		//存在しないなら終了
-		return false;
+	
+	
+	{
+		//キーワードをデータから探す
+		for (int InitialsIndex = 0; InitialsIndex < (int)TextData.size(); InitialsIndex++)
+		{
+			//キーワードの頭文字を検索
+			InitialsIndex = TextData.find(_Keyword.at(0), InitialsIndex);
+			
+			//nposだったら抜ける
+			if(InitialsIndex == std::string::npos){
+				KeyIndexPos = std::string::npos;
+				break;
+			}//頭文字があった位置からキーワード全体の比較
+			else if (TextData.compare(InitialsIndex, _Keyword.size(), _Keyword)
+				== 0){
+				//成功したなら代入して抜ける
+				KeyIndexPos = InitialsIndex;
+				break;
+			}
+			else{
+				//無いなら再検索
+				continue;
+			}
+
+		}
+		//文字がなかったなら失敗
+		if (KeyIndexPos == std::string::npos){
+			return false;
+		}
 	}
 
-	//=を探す
+
+
+
+	//KeyIndexからKeywordの文字数を足した部分に=があるか探す
 	int EqualIndexPos;
 	std::string str_Equal = "=";
 	EqualIndexPos = TextData.find_first_of(str_Equal, KeyIndexPos);
