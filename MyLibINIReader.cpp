@@ -5,7 +5,6 @@
 
 */
 
-#include "stdafx.h"
 
 #include "MyLibINIReader.h"
 
@@ -56,6 +55,37 @@ bool INIReader::GetPutValue(const std::string _Keyword, int* _Storage)
 	return true;
 }
 
+
+//値取得  bool
+bool INIReader::GetPutBoolValue(const std::string _Keyword, bool* _Storage)
+{
+	//文字列取得後、true or false判断、代入
+	std::string _stringvalue;
+	if (GetPutStringValue(_Keyword,&_stringvalue) == false){
+		return false;
+	}
+
+	//bool変換
+	if (_stringvalue.compare("TRUE") == 0 ||
+		_stringvalue.compare("True") == 0 ||
+		_stringvalue.compare("true") == 0){
+		//true
+		(*_Storage) = true;
+	}
+	else if (
+		_stringvalue.compare("FALSE") == 0 ||
+		_stringvalue.compare("False") == 0 ||
+		_stringvalue.compare("false") == 0 ){
+		//false
+		(*_Storage) = false;
+	}
+	else{
+		//bool変換失敗
+		return false;
+	}
+
+	return true;
+}
 
 
 //値取得　string
@@ -123,18 +153,18 @@ bool INIReader::GetPutStringValue(const std::string _Keyword, std::string* _Stor
 	}//改行コード２つ
 	else if (LFIndex != std::string::npos && CRIndex != std::string::npos){
 		if (LFIndex < CRIndex){//LF手前
-			ValueLastIndex = LFIndex;
+			ValueLastIndex = LFIndex - 1;
 		}
 		else{//CR手前
-			ValueLastIndex = CRIndex;
+			ValueLastIndex = CRIndex - 1;
 		}
 	}//改行コード１つ
 	else{
 		if (LFIndex != std::string::npos){
-			ValueLastIndex = LFIndex;
+			ValueLastIndex = LFIndex - 1;
 		}
 		else if(CRIndex != std::string::npos){
-			ValueLastIndex = CRIndex;
+			ValueLastIndex = CRIndex - 1;
 		}
 		else{//エラー
 			return false;
@@ -144,14 +174,17 @@ bool INIReader::GetPutStringValue(const std::string _Keyword, std::string* _Stor
 
 	//文字をストレージに格納する
 	if (ValueLastIndex != std::string::npos){
+		//ValueLastIndexの位置が途中なら
 		(*_Storage) = TextData.substr(
-			(EqualIndexPos + 1),
-			(ValueLastIndex - EqualIndexPos));
+			(EqualIndexPos + 1),//イコールの次のインデクスから
+			(ValueLastIndex - EqualIndexPos)//文字数
+			);
 	}
 	else{
+		//ValueLastIndexの位置が最後(npos)なら
 		(*_Storage) = TextData.substr(
 			(EqualIndexPos + 1),
-			ValueLastIndex);
+			ValueLastIndex);//最後まで
 	}
 
 	return true;

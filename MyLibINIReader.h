@@ -28,11 +28,15 @@ namespace MyLib
 		//指定されたファイルを読み込みます(false失敗)
 		bool LoadFile(const std::string _FileLocation);
 
-		//キーワードに代入された値を、渡された変数に入れます(int型)
+		//(int型)キーワードに代入された値を、渡された変数に入れます
 		bool GetPutValue(const std::string _Keyword, int* _Storage);
 
-		//キーワードに代入された値を、渡された変数に入れます(string型)
+		//(bool型)キーワードに代入された値を、渡された変数に入れます
+		bool GetPutBoolValue(const std::string _Keyword, bool* _Storage);
+
+		//(string型)キーワードに代入された値を、渡された変数に入れます
 		bool GetPutStringValue(const std::string _Keyword, std::string* _Storage);
+		
 
 		//データを取得します
 		inline std::string GetData()const{
@@ -40,6 +44,7 @@ namespace MyLib
 		}
 
 	private:
+		//読み込んだデータの保存用
 		std::string TextData;
 	};
 
